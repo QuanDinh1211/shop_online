@@ -2,15 +2,9 @@ import React, { useState } from "react";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Product } from "../types";
 
-interface ProductDetailProps {
-  onBack: () => void;
-  onAddToCart: (product: Product) => void;
-}
+interface ProductDetailProps {}
 
-export const ProductDetail: React.FC<ProductDetailProps> = ({
-  onBack,
-  onAddToCart,
-}) => {
+export const ProductDetail: React.FC<ProductDetailProps> = ({}) => {
   const [product, setProduct] = useState<Product | null>(null);
 
   const formatPrice = (price: number) => {
@@ -23,7 +17,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({
   return (
     <div className="container mx-auto px-4 py-6">
       <button
-        onClick={onBack}
+        onClick={() => {}}
         className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-6 transition-colors"
       >
         <ArrowLeft className="h-5 w-5" />

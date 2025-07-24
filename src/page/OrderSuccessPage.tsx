@@ -1,32 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { CartItem, CustomerInfo } from "../types"; // hoặc đường dẫn phù hợp với anh
+import { formatPrice } from "../utils/function";
 
-interface OrderSuccessProps {
-  cartItems: CartItem[];
-  orderInfo: CustomerInfo | null;
-  setCartItems: (items: CartItem[]) => void;
-  setOrderInfo: (info: CustomerInfo | null) => void;
-  handleBackToHome: () => void;
-}
+interface OrderSuccessProps {}
 
-const formatPrice = (price: number): string => {
-  return price.toLocaleString("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  });
-};
+const OrderSuccessPage: React.FC<OrderSuccessProps> = ({}) => {
+  const [orderInfo, setOrderInfo] = useState<CustomerInfo | null>(null);
 
-const OrderSuccessPage: React.FC<OrderSuccessProps> = ({
-  cartItems,
-  orderInfo,
-  setCartItems,
-  setOrderInfo,
-  handleBackToHome,
-}) => {
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  // const totalAmount = cartItems.reduce(
+  //   (sum, item) => sum + item.product.price * item.quantity,
+  //   0
+  // );
+
+  const totalAmount = 10000;
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -78,11 +64,7 @@ const OrderSuccessPage: React.FC<OrderSuccessProps> = ({
           </div>
 
           <button
-            onClick={() => {
-              setCartItems([]);
-              setOrderInfo(null);
-              handleBackToHome();
-            }}
+            onClick={() => {}}
             className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >
             Tiếp tục mua hàng

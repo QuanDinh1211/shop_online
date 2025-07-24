@@ -5,17 +5,9 @@ import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 
-interface HeaderProps {
-  cartItems: CartItem[];
-  onCartClick: () => void;
-  onHomeClick: () => void;
-}
+interface HeaderProps {}
 
-export const Header: React.FC<HeaderProps> = ({
-  cartItems,
-  onCartClick,
-  onHomeClick,
-}) => {
+export const Header: React.FC<HeaderProps> = ({}) => {
   const { user, logout, isAuthenticated } = useAuth();
   // const { totalItems } = useCart();
   const navigate = useNavigate();
@@ -25,14 +17,15 @@ export const Header: React.FC<HeaderProps> = ({
     navigate("/");
   };
 
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  // const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = 0;
 
   return (
     <header className="sticky top-0 z-50 bg-cyan-600 shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <button
-            onClick={onHomeClick}
+            onClick={() => {}}
             className="flex items-center space-x-2 text-white hover:text-cyan-100 transition-colors"
           >
             <Fish className="h-8 w-8" />

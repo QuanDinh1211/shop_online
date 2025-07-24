@@ -1,11 +1,19 @@
-import React from 'react';
-import { Fish, Phone, Mail, MapPin, Clock, Facebook, Instagram, Youtube } from 'lucide-react';
+import React from "react";
+import {
+  Fish,
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Facebook,
+  Instagram,
+  Youtube,
+} from "lucide-react";
 
-interface FooterProps {
-  onLinkClick: (page: 'about' | 'shipping' | 'return' | 'guide' | 'faq') => void;
-}
+interface FooterProps {}
 
-export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
+export const Footer: React.FC<FooterProps> = () => {
+  const onLinkClick = (page: string) => {};
   return (
     <footer className="bg-gray-800 text-white">
       <div className="container mx-auto px-4 py-8">
@@ -17,17 +25,26 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
               <h3 className="text-xl font-bold">Hải Sản Tươi Ngon</h3>
             </div>
             <p className="text-gray-300 mb-4">
-              Chuyên cung cấp hải sản tươi sống chất lượng cao với giá cả hợp lý. 
-              Cam kết 100% tươi ngon, giao hàng nhanh chóng tận nơi.
+              Chuyên cung cấp hải sản tươi sống chất lượng cao với giá cả hợp
+              lý. Cam kết 100% tươi ngon, giao hàng nhanh chóng tận nơi.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-cyan-400 transition-colors"
+              >
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-cyan-400 transition-colors"
+              >
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-cyan-400 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-cyan-400 transition-colors"
+              >
                 <Youtube className="h-5 w-5" />
               </a>
             </div>
@@ -73,8 +90,12 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
                 </div>
               </div>
               <div className="mt-4 p-3 bg-gray-700 rounded-lg">
-                <p className="text-sm font-medium text-cyan-400">Giao hàng nhanh</p>
-                <p className="text-xs text-gray-400">Trong vòng 2-4 giờ tại TP.HCM</p>
+                <p className="text-sm font-medium text-cyan-400">
+                  Giao hàng nhanh
+                </p>
+                <p className="text-xs text-gray-400">
+                  Trong vòng 2-4 giờ tại TP.HCM
+                </p>
               </div>
             </div>
           </div>
@@ -83,32 +104,32 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Liên kết nhanh</h4>
             <div className="space-y-2">
-              <button 
-                onClick={() => onLinkClick('about')}
+              <button
+                onClick={() => onLinkClick("about")}
                 className="block text-gray-300 hover:text-cyan-400 transition-colors text-left"
               >
                 Về chúng tôi
               </button>
-              <button 
-                onClick={() => onLinkClick('shipping')}
+              <button
+                onClick={() => onLinkClick("shipping")}
                 className="block text-gray-300 hover:text-cyan-400 transition-colors text-left"
               >
                 Chính sách giao hàng
               </button>
-              <button 
-                onClick={() => onLinkClick('return')}
+              <button
+                onClick={() => onLinkClick("return")}
                 className="block text-gray-300 hover:text-cyan-400 transition-colors text-left"
               >
                 Chính sách đổi trả
               </button>
-              <button 
-                onClick={() => onLinkClick('guide')}
+              <button
+                onClick={() => onLinkClick("guide")}
                 className="block text-gray-300 hover:text-cyan-400 transition-colors text-left"
               >
                 Hướng dẫn mua hàng
               </button>
-              <button 
-                onClick={() => onLinkClick('faq')}
+              <button
+                onClick={() => onLinkClick("faq")}
                 className="block text-gray-300 hover:text-cyan-400 transition-colors text-left"
               >
                 Câu hỏi thường gặp
@@ -124,10 +145,16 @@ export const Footer: React.FC<FooterProps> = ({ onLinkClick }) => {
               © 2025 Hải Sản Tươi Ngon. Tất cả quyền được bảo lưu.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-cyan-400 text-sm transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-cyan-400 text-sm transition-colors"
+              >
                 Điều khoản sử dụng
               </a>
-              <a href="#" className="text-gray-400 hover:text-cyan-400 text-sm transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-cyan-400 text-sm transition-colors"
+              >
                 Chính sách bảo mật
               </a>
             </div>
