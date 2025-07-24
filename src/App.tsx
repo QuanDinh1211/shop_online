@@ -1,32 +1,49 @@
-import React, { useState } from 'react';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { HomePage } from './components/HomePage';
-import { ProductDetail } from './components/ProductDetail';
-import { CartPage } from './components/CartPage';
-import { CheckoutPage } from './components/CheckoutPage';
-import { AboutPage } from './components/AboutPage';
-import { ShippingPolicyPage } from './components/ShippingPolicyPage';
-import { ReturnPolicyPage } from './components/ReturnPolicyPage';
-import { BuyingGuidePage } from './components/BuyingGuidePage';
-import { FAQPage } from './components/FAQPage';
-import { Product, CartItem, CustomerInfo } from './types';
+import React, { useState } from "react";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
 
-type Page = 'home' | 'product' | 'cart' | 'checkout' | 'success' | 'about' | 'shipping' | 'return' | 'guide' | 'faq';
+import { Product, CartItem, CustomerInfo } from "./types";
+import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HomePage } from "./page/HomePage";
+import { ProductDetail } from "./page/ProductDetail";
+import LoginPage from "./page/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { CartPage } from "./page/CartPage";
+import { CheckoutPage } from "./page/CheckoutPage";
+import { AboutPage } from "./page/AboutPage";
+import { ShippingPolicyPage } from "./page/ShippingPolicyPage";
+import { ReturnPolicyPage } from "./page/ReturnPolicyPage";
+import { BuyingGuidePage } from "./page/BuyingGuidePage";
+import { FAQPage } from "./page/FAQPage";
+import OrderSuccessPage from "./page/OrderSuccessPage";
+
+type Page =
+  | "home"
+  | "product"
+  | "cart"
+  | "checkout"
+  | "success"
+  | "about"
+  | "shipping"
+  | "return"
+  | "guide"
+  | "faq";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('home');
+  const [currentPage, setCurrentPage] = useState<Page>("home");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [orderInfo, setOrderInfo] = useState<CustomerInfo | null>(null);
 
   const addToCart = (product: Product) => {
     if (!product.inStock) return;
-    
-    setCartItems(prev => {
-      const existingItem = prev.find(item => item.product.id === product.id);
+
+    setCartItems((prev) => {
+      const existingItem = prev.find((item) => item.product.id === product.id);
       if (existingItem) {
-        return prev.map(item =>
+        return prev.map((item) =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
@@ -44,42 +61,42 @@ function App() {
       removeItem(productId);
       return;
     }
-    
-    setCartItems(prev =>
-      prev.map(item =>
-        item.product.id === productId
-          ? { ...item, quantity }
-          : item
+
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.product.id === productId ? { ...item, quantity } : item
       )
     );
   };
 
   const removeItem = (productId: number) => {
-    setCartItems(prev => prev.filter(item => item.product.id !== productId));
+    setCartItems((prev) =>
+      prev.filter((item) => item.product.id !== productId)
+    );
   };
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
-    setCurrentPage('product');
+    setCurrentPage("product");
   };
 
   const handleCartClick = () => {
-    setCurrentPage('cart');
+    setCurrentPage("cart");
   };
 
   const handleCheckout = () => {
-    setCurrentPage('checkout');
+    setCurrentPage("checkout");
   };
 
   const handlePlaceOrder = (customerInfo: CustomerInfo) => {
     setOrderInfo(customerInfo);
-    setCurrentPage('success');
+    setCurrentPage("success");
     // In a real app, you would send the order to a backend here
-    console.log('Order placed:', { items: cartItems, customer: customerInfo });
+    console.log("Order placed:", { items: cartItems, customer: customerInfo });
   };
 
   const handleBackToHome = () => {
-    setCurrentPage('home');
+    setCurrentPage("home");
     setSelectedProduct(null);
   };
 
@@ -88,118 +105,115 @@ function App() {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND'
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
     }).format(price);
   };
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return (
-          <HomePage
-            onProductClick={handleProductClick}
-            onAddToCart={addToCart}
-          />
-        );
-      
-      case 'product':
-        return selectedProduct ? (
-          <ProductDetail
-            product={selectedProduct}
-            onBack={handleBackToHome}
-            onAddToCart={addToCart}
-          />
-        ) : null;
-      
-      case 'cart':
-        return (
-          <CartPage
-            cartItems={cartItems}
-            onBack={handleBackToHome}
-            onUpdateQuantity={updateQuantity}
-            onRemoveItem={removeItem}
-            onCheckout={handleCheckout}
-          />
-        );
-      
-      case 'checkout':
-        return (
-          <CheckoutPage
-            cartItems={cartItems}
-            onBack={() => setCurrentPage('cart')}
-            onPlaceOrder={handlePlaceOrder}
-          />
-        );
-      
-      case 'success':
-        const totalAmount = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-        return (
-          <div className="container mx-auto px-4 py-12">
-            <div className="max-w-2xl mx-auto text-center">
-              <div className="bg-white rounded-lg shadow-lg p-8">
-                <div className="text-green-500 text-6xl mb-4">✓</div>
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">Đặt hàng thành công!</h1>
-                <p className="text-gray-600 mb-6">
-                  Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất.
-                </p>
-                
-                <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-                  <h3 className="font-semibold text-gray-800 mb-2">Thông tin đơn hàng:</h3>
-                  <div className="space-y-1 text-sm text-gray-600">
-                    <p><strong>Khách hàng:</strong> {orderInfo?.fullName}</p>
-                    <p><strong>Số điện thoại:</strong> {orderInfo?.phone}</p>
-                    <p><strong>Địa chỉ:</strong> {orderInfo?.address}</p>
-                    <p><strong>Tổng tiền:</strong> <span className="font-semibold text-orange-600">{formatPrice(totalAmount)}</span></p>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={() => {
-                    setCartItems([]);
-                    setOrderInfo(null);
-                    handleBackToHome();
-                  }}
-                  className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-                >
-                  Tiếp tục mua hàng
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 'about':
-        return <AboutPage onBack={handleBackToHome} />;
-      
-      case 'shipping':
-        return <ShippingPolicyPage onBack={handleBackToHome} />;
-      
-      case 'return':
-        return <ReturnPolicyPage onBack={handleBackToHome} />;
-      
-      case 'guide':
-        return <BuyingGuidePage onBack={handleBackToHome} />;
-      
-      case 'faq':
-        return <FAQPage onBack={handleBackToHome} />;
-      
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header
-        cartItems={cartItems}
-        onCartClick={handleCartClick}
-        onHomeClick={handleBackToHome}
-      />
-      {renderPage()}
-      <Footer onLinkClick={handleFooterLinkClick} />
-    </div>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <Header
+              cartItems={cartItems}
+              onCartClick={handleCartClick}
+              onHomeClick={handleBackToHome}
+            />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <HomePage
+                    onProductClick={handleProductClick}
+                    onAddToCart={addToCart}
+                  />
+                }
+              />
+              <Route
+                path="/products"
+                element={
+                  <HomePage
+                    onProductClick={handleProductClick}
+                    onAddToCart={addToCart}
+                  />
+                }
+              />
+              <Route
+                path="/about"
+                element={<AboutPage onBack={handleBackToHome} />}
+              />
+              <Route
+                path="/shipping"
+                element={<ShippingPolicyPage onBack={handleBackToHome} />}
+              />
+              <Route
+                path="/return"
+                element={<ReturnPolicyPage onBack={handleBackToHome} />}
+              />
+              <Route
+                path="/guide"
+                element={<BuyingGuidePage onBack={handleBackToHome} />}
+              />
+              <Route
+                path="/faq"
+                element={<FAQPage onBack={handleBackToHome} />}
+              />
+              <Route
+                path="/success"
+                element={
+                  <OrderSuccessPage
+                    setCartItems={setCartItems}
+                    cartItems={cartItems}
+                    orderInfo={orderInfo}
+                    setOrderInfo={setOrderInfo}
+                    handleBackToHome={handleBackToHome}
+                  />
+                }
+              />
+              <Route
+                path="/product/:id"
+                element={
+                  <ProductDetail
+                    onBack={handleBackToHome}
+                    onAddToCart={addToCart}
+                  />
+                }
+              />
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/cart"
+                element={
+                  <ProtectedRoute>
+                    <CartPage
+                      cartItems={cartItems}
+                      onBack={handleBackToHome}
+                      onUpdateQuantity={updateQuantity}
+                      onRemoveItem={removeItem}
+                      onCheckout={handleCheckout}
+                    />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/checkout"
+                element={
+                  <ProtectedRoute>
+                    <CheckoutPage
+                      cartItems={cartItems}
+                      onBack={() => setCurrentPage("cart")}
+                      onPlaceOrder={handlePlaceOrder}
+                    />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+            <Footer onLinkClick={handleFooterLinkClick} />
+          </div>
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

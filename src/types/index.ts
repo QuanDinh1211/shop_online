@@ -9,6 +9,14 @@ export interface Product {
   inStock: boolean;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  phone?: string;
+  address?: string;
+}
+
 export interface CartItem {
   product: Product;
   quantity: number;
@@ -21,3 +29,4 @@ export interface CustomerInfo {
   paymentMethod: 'cash' | 'card' | 'bank';
   notes?: string;
 }
+
