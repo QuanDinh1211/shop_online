@@ -1,29 +1,82 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import {  toast } from "react-toastify";
 import { Search, Plus, Eye } from "lucide-react";
-import { Product } from "../types";
-import { products, categories } from "../data/products";
+import {  Product } from "../types";
+import { productService } from "../services/productService";
+import { formatPrice } from "../utils/function";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../contexts/CartContext";
 
 interface HomePageProps {}
 
 export const HomePage: React.FC<HomePageProps> = () => {
+
+  const navigate = useNavigate();
+
+  const { addToCart } = useCart();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Tất cả");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(["Tất cả"]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Lấy dữ liệu từ API khi component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [productData, categoryData] = await Promise.all([
+          productService.getProducts(),
+          productService.getCategories(),
+        ]);
+
+        setProducts(productData);
+        setCategories(["Tất cả", ...categoryData]);
+      } catch (err) {
+        setError("Không thể tải dữ liệu. Vui lòng thử lại sau.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesCategory =
-      selectedCategory === "Tất cả" || product.category === selectedCategory;
+      selectedCategory === "Tất cả" || product.category.name === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
+  const handleAddToCart = (product: Product) => {
+    if (!product.inStock) {
+      toast.error("Sản phẩm đã hết hàng!");
+      return;
+    }
+    addToCart(product, 1);
+    toast.success(`Đã thêm ${product.name} vào giỏ hàng!`);
   };
+
+    if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-6 text-center">
+        <p className="text-gray-500 text-lg">Đang tải...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-6 text-center">
+        <p className="text-red-500 text-lg">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -102,14 +155,14 @@ export const HomePage: React.FC<HomePageProps> = () => {
               </p>
               <div className="flex gap-2">
                 <button
-                  onClick={() => {}}
+                  onClick={() => navigate('/product/' + product.id)}
                   className="flex-1 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-colors"
                 >
                   <Eye className="h-4 w-4" />
                   <span className="hidden sm:inline">Chi tiết</span>
                 </button>
                 <button
-                  onClick={() => {}}
+                  onClick={() => handleAddToCart(product)}
                   disabled={!product.inStock}
                   className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                     product.inStock

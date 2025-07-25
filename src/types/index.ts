@@ -5,8 +5,18 @@ export interface Product {
   image: string;
   description: string;
   unit: string;
-  category: string;
+  category: {
+    id: number;
+    name: string;
+  };
   inStock: boolean;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface User {

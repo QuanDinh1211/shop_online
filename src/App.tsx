@@ -17,6 +17,8 @@ import { ReturnPolicyPage } from "./page/ReturnPolicyPage";
 import { BuyingGuidePage } from "./page/BuyingGuidePage";
 import { FAQPage } from "./page/FAQPage";
 import OrderSuccessPage from "./page/OrderSuccessPage";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -39,9 +41,7 @@ function App() {
               <Route
                 path="/cart"
                 element={
-                  <ProtectedRoute>
                     <CartPage />
-                  </ProtectedRoute>
                 }
               />
               <Route
@@ -56,6 +56,11 @@ function App() {
             <Footer />
           </div>
         </Router>
+        <ToastContainer
+          className="custom-toast-container"
+          pauseOnFocusLoss={false}
+          autoClose={6500}
+        />
       </CartProvider>
     </AuthProvider>
   );

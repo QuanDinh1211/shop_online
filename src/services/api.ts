@@ -34,7 +34,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response: AxiosResponse) => {
     // Trả về dữ liệu từ response
-    return response.data;
+    return response;
   },
   (error) => {
     // Xử lý lỗi, ví dụ: nếu 401 thì logout
