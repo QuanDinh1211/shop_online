@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 import { formatPrice } from "../utils/function";
 import { orderService } from "../services/orderService";
+import Loading from "../components/Loading";
+import { toast } from "react-toastify";
 
 interface CheckoutPageProps {}
 
@@ -43,7 +45,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
     if (!validateForm()) return;
     setIsSubmitting(true);
     try {
-      await orderService.createOrder({
+      const result = await orderService.createOrder({
         name: customerInfo.fullName,
         phone: customerInfo.phone,
         address: customerInfo.address,
@@ -51,14 +53,20 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
           productId: item.product.id,
           quantity: item.quantity,
         })),
+        totalPrice: totalPrice,
         notes: customerInfo.notes,
         paymentMethod: customerInfo.paymentMethod,
       });
-      clearCart();
-      alert("Đặt hàng thành công!");
-      navigate("/");
+      if (result?.success) {
+        clearCart();
+        navigate(`/success`, { state: { order: result?.data } });
+      } else {
+        toast.error(
+          result?.message || "Đặt hàng không thành công. Vui lòng thử lại!"
+        );
+      }
     } catch (error: any) {
-      alert(
+      toast.error(
         error?.response?.data?.message ||
           "Có lỗi khi đặt hàng. Vui lòng thử lại!"
       );
@@ -89,6 +97,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
+      <Loading visible={isSubmitting} title="Đang xử lý đơn hàng..." />
       <button
         onClick={() => navigate("/cart")}
         className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-6 transition-colors"

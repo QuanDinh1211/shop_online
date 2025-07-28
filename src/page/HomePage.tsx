@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from "react";
-import {  toast } from "react-toastify";
-import { Search, Plus, Eye } from "lucide-react";
-import {  Product } from "../types";
+import { toast } from "react-toastify";
+import {
+  Search,
+  Plus,
+  Eye,
+  ShoppingCart,
+  Truck,
+  Shield,
+  Headphones,
+} from "lucide-react";
+import { Product } from "../types";
 import { productService } from "../services/productService";
 import { formatPrice } from "../utils/function";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import Loading from "../components/Loading";
+import Carousel from "../components/Carousel";
 
 interface HomePageProps {}
 
 export const HomePage: React.FC<HomePageProps> = () => {
-
   const navigate = useNavigate();
 
   const { addToCart } = useCart();
@@ -49,7 +58,8 @@ export const HomePage: React.FC<HomePageProps> = () => {
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchesCategory =
-      selectedCategory === "Tất cả" || product.category.name === selectedCategory;
+      selectedCategory === "Tất cả" ||
+      product.category.name === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -62,14 +72,6 @@ export const HomePage: React.FC<HomePageProps> = () => {
     toast.success(`Đã thêm ${product.name} vào giỏ hàng!`);
   };
 
-    if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-6 text-center">
-        <p className="text-gray-500 text-lg">Đang tải...</p>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="container mx-auto px-4 py-6 text-center">
@@ -80,6 +82,53 @@ export const HomePage: React.FC<HomePageProps> = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
+      <Loading visible={loading} title="" />
+      {/* Hero Carousel */}
+      <section className="rounded-lg  p-4 mb-6">
+        <Carousel />
+      </section>
+
+      {/* Features */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Truck className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Giao hàng nhanh
+              </h3>
+              <p className="text-gray-600">
+                Giao hàng trong 24h tại TP.HCM và Hà Nội
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-8 w-8 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Bảo hành chính hãng
+              </h3>
+              <p className="text-gray-600">
+                Bảo hành 12-24 tháng từ nhà sản xuất
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Headphones className="h-8 w-8 text-purple-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Hỗ trợ 24/7
+              </h3>
+              <p className="text-gray-600">
+                Đội ngũ tư vấn chuyên nghiệp luôn sẵn sàng
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hero Section */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-2">
@@ -155,7 +204,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
               </p>
               <div className="flex gap-2">
                 <button
-                  onClick={() => navigate('/product/' + product.id)}
+                  onClick={() => navigate("/product/" + product.id)}
                   className="flex-1 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition-colors"
                 >
                   <Eye className="h-4 w-4" />
@@ -170,7 +219,7 @@ export const HomePage: React.FC<HomePageProps> = () => {
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                   }`}
                 >
-                  <Plus className="h-4 w-4" />
+                  <ShoppingCart className="h-4 w-4" />
                   <span className="hidden sm:inline">Thêm</span>
                 </button>
               </div>

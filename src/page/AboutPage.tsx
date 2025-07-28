@@ -28,7 +28,7 @@ export const AboutPage: React.FC<AboutPageProps> = () => {
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white p-8 text-center">
           <Fish className="h-16 w-16 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">Về Hải Sản Tươi Ngon</h1>
+          <h1 className="text-3xl font-bold mb-2">Về VieStore</h1>
           <p className="text-cyan-100 text-lg">
             Chuyên cung cấp hải sản tươi sống chất lượng cao từ năm 2015
           </p>
@@ -41,10 +41,10 @@ export const AboutPage: React.FC<AboutPageProps> = () => {
               Câu chuyện của chúng tôi
             </h2>
             <p className="text-gray-600 leading-relaxed mb-4">
-              Hải Sản Tươi Ngon được thành lập với sứ mệnh mang đến cho khách
-              hàng những sản phẩm hải sản tươi ngon nhất từ các vùng biển Việt
-              Nam. Với hơn 10 năm kinh nghiệm trong ngành, chúng tôi tự hào là
-              đối tác tin cậy của hàng nghìn gia đình Việt.
+              VieStore được thành lập với sứ mệnh mang đến cho khách hàng những
+              sản phẩm hải sản tươi ngon nhất từ các vùng biển Việt Nam. Với hơn
+              10 năm kinh nghiệm trong ngành, chúng tôi tự hào là đối tác tin
+              cậy của hàng nghìn gia đình Việt.
             </p>
             <p className="text-gray-600 leading-relaxed">
               Từ những ngày đầu khởi nghiệp với một cửa hàng nhỏ tại chợ hải

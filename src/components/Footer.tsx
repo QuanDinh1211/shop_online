@@ -46,7 +46,7 @@ export const Footer: React.FC<FooterProps> = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Fish className="h-8 w-8 text-cyan-400" />
-              <h3 className="text-xl font-bold">Hải Sản Tươi Ngon</h3>
+              <h3 className="text-xl font-bold">VieStore</h3>
             </div>
             <p className="text-gray-300 mb-4">
               Chuyên cung cấp hải sản tươi sống chất lượng cao với giá cả hợp
@@ -166,7 +166,7 @@ export const Footer: React.FC<FooterProps> = () => {
         <div className="border-t border-gray-700 mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2025 Hải Sản Tươi Ngon. Tất cả quyền được bảo lưu.
+              © 2025 VieStore. Tất cả quyền được bảo lưu.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a

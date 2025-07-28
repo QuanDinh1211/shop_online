@@ -5,7 +5,7 @@ import { ArrowLeft, Plus } from "lucide-react";
 import { Product } from "../types";
 import { useCart } from "../contexts/CartContext";
 import { toast } from "react-toastify";
-
+import Loading from "../components/Loading";
 
 interface ProductDetailProps {}
 
@@ -52,7 +52,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({}) => {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-6 text-center">
-        <p className="text-gray-500 text-lg">Đang tải thông tin sản phẩm...</p>
+        <Loading visible={loading} title="Đang tải thông tin sản phẩm..." />
       </div>
     );
   }
@@ -126,7 +126,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({}) => {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-500">Danh mục:</span>
-                  <span className="ml-2 font-medium">{product.category.name}</span>
+                  <span className="ml-2 font-medium">
+                    {product.category.name}
+                  </span>
                 </div>
                 <div>
                   <span className="text-gray-500">Đơn vị:</span>

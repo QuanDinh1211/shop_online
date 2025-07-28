@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { User, Lock, Mail, Eye, EyeOff, Fish } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
-import bcrypt from "bcryptjs";
 
 const LoginPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -244,6 +243,16 @@ const LoginPage: React.FC = () => {
                 )}
               </button>
             </form>
+
+            <div className="flex justify-end my-2">
+              <button
+                type="button"
+                className="text-blue-600 hover:underline text-sm"
+                onClick={() => navigate("/forgot-password")}
+              >
+                Quên mật khẩu?
+              </button>
+            </div>
 
             {/* Toggle between login/register */}
             <div className="mt-6 text-center">

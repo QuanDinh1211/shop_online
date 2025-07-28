@@ -1,5 +1,5 @@
 import React from "react";
-import { ShoppingCart, User, LogOut, Fish } from "lucide-react";
+import { ShoppingCart, User, LogOut, Fish, Clock } from "lucide-react";
 import { CartItem } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
@@ -28,13 +28,34 @@ export const Header: React.FC<HeaderProps> = ({}) => {
             className="flex items-center space-x-2 text-white hover:text-cyan-100 transition-colors"
           >
             <Fish className="h-8 w-8" />
-            <h1 className="text-xl font-bold">Hải Sản Tươi Ngon</h1>
+            <h1 className="text-xl font-bold">VieStore</h1>
           </button>
+
+          <nav className="hidden md:flex space-x-8">
+            <Link
+              to="/"
+              className="text-white hover:text-cyan-100 transition-colors"
+            >
+              Trang chủ
+            </Link>
+            <Link
+              to="/products"
+              className="text-white hover:text-cyan-100 transition-colors"
+            >
+              Sản phẩm
+            </Link>
+            <Link
+              to="/order-tracking"
+              className="text-white hover:text-cyan-100 transition-colors"
+            >
+              Lịch sử đơn hàng
+            </Link>
+          </nav>
 
           <div className="flex items-center space-x-4">
             <Link
               to="/cart"
-              className="relative p-2   text-white hover:text-cyan-100 transition-colors"
+              className="relative p-2 text-white hover:text-cyan-100 transition-colors"
             >
               <ShoppingCart className="h-6 w-6" />
               {totalItems > 0 && (
@@ -42,6 +63,13 @@ export const Header: React.FC<HeaderProps> = ({}) => {
                   {totalItems}
                 </span>
               )}
+            </Link>
+            <Link
+              to="/order-tracking"
+              className="p-2 text-white hover:text-cyan-100 transition-colors md:hidden"
+              title="Lịch sử đơn hàng"
+            >
+              <Clock className="h-6 w-6" />
             </Link>
 
             {isAuthenticated ? (

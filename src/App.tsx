@@ -19,6 +19,8 @@ import { FAQPage } from "./page/FAQPage";
 import OrderSuccessPage from "./page/OrderSuccessPage";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import OrderTrackingPage from "./page/OrderTrackingPage";
+import ForgotPasswordPage from "./page/ForgotPasswordPage";
 
 function App() {
   return (
@@ -38,17 +40,21 @@ function App() {
               <Route path="/success" element={<OrderSuccessPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route
-                path="/cart"
-                element={
-                    <CartPage />
-                }
-              />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route
                 path="/checkout"
                 element={
                   <ProtectedRoute>
                     <CheckoutPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/order-tracking"
+                element={
+                  <ProtectedRoute>
+                    <OrderTrackingPage />
                   </ProtectedRoute>
                 }
               />

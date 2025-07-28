@@ -1,18 +1,25 @@
 import React, { useState } from "react";
-import { CartItem, CustomerInfo } from "../types"; // hoặc đường dẫn phù hợp với anh
+import { OrderInfo } from "../types"; // hoặc đường dẫn phù hợp với anh
 import { formatPrice } from "../utils/function";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface OrderSuccessProps {}
 
 const OrderSuccessPage: React.FC<OrderSuccessProps> = ({}) => {
-  const [orderInfo, setOrderInfo] = useState<CustomerInfo | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // const totalAmount = cartItems.reduce(
-  //   (sum, item) => sum + item.product.price * item.quantity,
-  //   0
-  // );
+  const order = location.state?.order as OrderInfo | null;
 
-  const totalAmount = 10000;
+  React.useEffect(() => {
+    if (!order) {
+      navigate("/");
+    }
+  }, [order, navigate]);
+
+  if (!order) {
+    return null;
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -33,38 +40,38 @@ const OrderSuccessPage: React.FC<OrderSuccessProps> = ({}) => {
             </h3>
             <div className="space-y-1 text-sm text-gray-600">
               <p>
-                <strong>Khách hàng:</strong> {orderInfo?.fullName}
+                <strong>Khách hàng:</strong> {order?.name}
               </p>
               <p>
-                <strong>Số điện thoại:</strong> {orderInfo?.phone}
+                <strong>Số điện thoại:</strong> {order?.phone}
               </p>
               <p>
-                <strong>Địa chỉ:</strong> {orderInfo?.address}
+                <strong>Địa chỉ:</strong> {order?.address}
               </p>
               <p>
                 <strong>Phương thức thanh toán:</strong>{" "}
-                {orderInfo?.paymentMethod === "cash"
+                {order?.paymentMethod === "cash"
                   ? "Tiền mặt"
-                  : orderInfo?.paymentMethod === "card"
+                  : order?.paymentMethod === "card"
                   ? "Thẻ"
                   : "Chuyển khoản"}
               </p>
               <p>
                 <strong>Tổng tiền:</strong>{" "}
                 <span className="font-semibold text-orange-600">
-                  {formatPrice(totalAmount)}
+                  {formatPrice(order?.totalAmount)}
                 </span>
               </p>
-              {orderInfo?.notes && (
+              {order?.notes && (
                 <p>
-                  <strong>Ghi chú:</strong> {orderInfo.notes}
+                  <strong>Ghi chú:</strong> {order.notes}
                 </p>
               )}
             </div>
           </div>
 
           <button
-            onClick={() => {}}
+            onClick={() => navigate("/")}
             className="bg-cyan-600 hover:bg-cyan-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >
             Tiếp tục mua hàng
