@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 
@@ -21,12 +21,15 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import OrderTrackingPage from "./page/OrderTrackingPage";
 import ForgotPasswordPage from "./page/ForgotPasswordPage";
+import ResetPasswordPage from "./page/ResetPasswordPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
         <Router>
+          <ScrollToTop />
           <div className="min-h-screen bg-gray-50">
             <Header />
             <Routes>
@@ -42,6 +45,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route
                 path="/checkout"
                 element={

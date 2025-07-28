@@ -75,7 +75,10 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-800">
-                      {item.product.name}
+                      {item.product.name}{" "}
+                      <span className="inline-block bg-gray-100 text-gray-700 ml-2 px-3 py-1 rounded-md text-xs">
+                        {item.product.unit}
+                      </span>
                     </h3>
                     <p className="text-gray-600 text-sm">
                       {item.product.category.name}
@@ -132,7 +135,7 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
                 className="flex justify-between text-sm"
               >
                 <span className="text-gray-600">
-                  {item.product.name} x{item.quantity}
+                  {item.product.name} x{item.quantity} {item.product.unit}
                 </span>
                 <span className="font-semibold">
                   {formatPrice(item.product.price * item.quantity)}

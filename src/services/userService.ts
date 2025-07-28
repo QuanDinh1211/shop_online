@@ -36,4 +36,16 @@ export const userService = {
     }
     return response.data.data;
   },
+
+  // xác nhận email
+  forgotPassword: async (email: string): Promise<{ success: boolean; message: string }> => {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+  },
+
+  resetPassword: async (email: string, code: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+    const response = await api.post('/auth/reset-password', { email, code, newPassword });
+    console.log('response', response)
+    return response.data;
+  },
 };

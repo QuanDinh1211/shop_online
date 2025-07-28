@@ -39,8 +39,11 @@ api.interceptors.response.use(
   (error) => {
     // Xử lý lỗi, ví dụ: nếu 401 thì logout
     if (error.response?.status === 401) {
-      // Thực hiện logout hoặc redirect
-      console.log('Unauthorized, logging out...');
+      // Xóa thông tin đăng nhập
+      localStorage.removeItem('seafood_token');
+      localStorage.removeItem('seafood_user');
+      // Chuyển hướng về trang đăng nhập hoặc reload
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

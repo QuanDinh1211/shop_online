@@ -51,15 +51,15 @@ const LoginPage: React.FC = () => {
       }
 
       // Gửi password dạng plain text lên BE
-      const success = await register(
+      const result = await register(
         formData.name,
         formData.email,
         formData.password
       );
-      if (success) {
+      if (result.success) {
         navigate(from, { replace: true });
       } else {
-        setError("Email đã tồn tại hoặc đăng ký thất bại");
+        setError(result.message || "Email đã tồn tại hoặc đăng ký thất bại");
       }
     }
     setIsLoading(false);
@@ -244,15 +244,17 @@ const LoginPage: React.FC = () => {
               </button>
             </form>
 
-            <div className="flex justify-end my-2">
-              <button
-                type="button"
-                className="text-blue-600 hover:underline text-sm"
-                onClick={() => navigate("/forgot-password")}
-              >
-                Quên mật khẩu?
-              </button>
-            </div>
+            {isLogin && (
+              <div className="flex justify-end my-2">
+                <button
+                  type="button"
+                  className="text-blue-600 hover:underline text-sm"
+                  onClick={() => navigate("/forgot-password")}
+                >
+                  Quên mật khẩu?
+                </button>
+              </div>
+            )}
 
             {/* Toggle between login/register */}
             <div className="mt-6 text-center">
