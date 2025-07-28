@@ -9,7 +9,9 @@ interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = ({}) => {
   const { user, logout, isAuthenticated } = useAuth();
-  // const { totalItems } = useCart();
+
+  const { totalItems } = useCart();
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -17,15 +19,12 @@ export const Header: React.FC<HeaderProps> = ({}) => {
     navigate("/");
   };
 
-  // const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalItems = 0;
-
   return (
     <header className="sticky top-0 z-50 bg-cyan-600 shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <button
-            onClick={() => {}}
+            onClick={() => navigate("/")}
             className="flex items-center space-x-2 text-white hover:text-cyan-100 transition-colors"
           >
             <Fish className="h-8 w-8" />
@@ -67,19 +66,6 @@ export const Header: React.FC<HeaderProps> = ({}) => {
               </Link>
             )}
           </div>
-
-          {/* <button
-            onClick={onCartClick}
-            className="relative flex items-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors"
-          >
-            <ShoppingCart className="h-5 w-5" />
-            <span className="hidden sm:inline">Giỏ hàng</span>
-            {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center">
-                {totalItems}
-              </span>
-            )}
-          </button> */}
         </div>
       </div>
     </header>

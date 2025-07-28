@@ -1,27 +1,18 @@
 import React, { useState } from "react";
 import { ArrowLeft, CreditCard, Banknote, Building } from "lucide-react";
 import { CartItem, CustomerInfo } from "../types";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../contexts/CartContext";
+import { formatPrice } from "../utils/function";
+import { orderService } from "../services/orderService";
 
 interface CheckoutPageProps {}
 
 export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
-  const cartItems = [
-    {
-      quantity: 1,
-      product: {
-        id: 2,
-        name: "Cua Biển Tươi Sống",
-        price: 450000,
-        image:
-          "https://images.pexels.com/photos/1395319/pexels-photo-1395319.jpeg",
-        description:
-          "Cua biển tươi sống, thịt chắc ngọt, màu đỏ tự nhiên. Thích hợp để hấp, nướng hoặc nấu lẩu.",
-        unit: "kg",
-        category: "Cua",
-        inStock: true,
-      },
-    },
-  ];
+  const navigate = useNavigate();
+
+  const { items: cartItems, clearCart, totalPrice } = useCart();
+
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     fullName: "",
     phone: "",
@@ -31,44 +22,48 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
   });
 
   const [errors, setErrors] = useState<Partial<CustomerInfo>>({});
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  };
-
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
-    const newErrors: Partial<CustomerInfo> = {};
-
-    if (!customerInfo.fullName.trim()) {
+    const newErrors: Partial<typeof customerInfo> = {};
+    if (!customerInfo.fullName.trim())
       newErrors.fullName = "Vui lòng nhập họ tên";
-    }
-
-    if (!customerInfo.phone.trim()) {
+    if (!customerInfo.phone.trim())
       newErrors.phone = "Vui lòng nhập số điện thoại";
-    } else if (!/^[0-9]{10,11}$/.test(customerInfo.phone.replace(/\s/g, ""))) {
+    else if (!/^[0-9]{10,11}$/.test(customerInfo.phone.replace(/\s/g, "")))
       newErrors.phone = "Số điện thoại không hợp lệ";
-    }
-
-    if (!customerInfo.address.trim()) {
+    if (!customerInfo.address.trim())
       newErrors.address = "Vui lòng nhập địa chỉ giao hàng";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (!validateForm()) return;
+    setIsSubmitting(true);
+    try {
+      await orderService.createOrder({
+        name: customerInfo.fullName,
+        phone: customerInfo.phone,
+        address: customerInfo.address,
+        items: cartItems.map((item) => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+        })),
+        notes: customerInfo.notes,
+        paymentMethod: customerInfo.paymentMethod,
+      });
+      clearCart();
+      alert("Đặt hàng thành công!");
+      navigate("/");
+    } catch (error: any) {
+      alert(
+        error?.response?.data?.message ||
+          "Có lỗi khi đặt hàng. Vui lòng thử lại!"
+      );
     }
+    setIsSubmitting(false);
   };
 
   const paymentMethods = [
@@ -95,7 +90,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
   return (
     <div className="container mx-auto px-4 py-6">
       <button
-        onClick={() => {}}
+        onClick={() => navigate("/cart")}
         className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-6 transition-colors"
       >
         <ArrowLeft className="h-5 w-5" />
@@ -109,7 +104,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
               Thông tin giao hàng
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Họ và tên *
@@ -117,12 +112,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
                 <input
                   type="text"
                   value={customerInfo.fullName}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setCustomerInfo({
                       ...customerInfo,
                       fullName: e.target.value,
-                    })
-                  }
+                    });
+                    setErrors((prev) => ({ ...prev, fullName: undefined }));
+                  }}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent ${
                     errors.fullName ? "border-red-500" : "border-gray-300"
                   }`}
@@ -140,9 +136,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
                 <input
                   type="tel"
                   value={customerInfo.phone}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, phone: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setCustomerInfo({ ...customerInfo, phone: e.target.value });
+                    setErrors((prev) => ({ ...prev, phone: undefined }));
+                  }}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent ${
                     errors.phone ? "border-red-500" : "border-gray-300"
                   }`}
@@ -159,12 +156,13 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
                 </label>
                 <textarea
                   value={customerInfo.address}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setCustomerInfo({
                       ...customerInfo,
                       address: e.target.value,
-                    })
-                  }
+                    });
+                    setErrors((prev) => ({ ...prev, address: undefined }));
+                  }}
                   rows={3}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent ${
                     errors.address ? "border-red-500" : "border-gray-300"
@@ -262,17 +260,16 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = () => {
           <div className="border-t pt-4 mb-6">
             <div className="flex justify-between text-lg font-bold">
               <span>Tổng cộng:</span>
-              <span className="text-orange-600">
-                {formatPrice(totalAmount)}
-              </span>
+              <span className="text-orange-600">{formatPrice(totalPrice)}</span>
             </div>
           </div>
 
           <button
             onClick={handleSubmit}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-semibold transition-colors"
+            disabled={isSubmitting}
           >
-            Xác nhận đặt hàng
+            {isSubmitting ? "Đang xử lý..." : "Xác nhận đặt hàng"}
           </button>
 
           <div className="mt-4 text-xs text-gray-500 text-center">

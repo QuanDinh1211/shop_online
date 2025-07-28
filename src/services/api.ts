@@ -19,7 +19,7 @@ const api: AxiosInstance = axios.create(config);
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Ví dụ: Thêm token vào header nếu có
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('seafood_token');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }

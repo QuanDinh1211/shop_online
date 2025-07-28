@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { User, Lock, Mail, Eye, EyeOff, Fish } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import bcrypt from "bcryptjs";
 
 const LoginPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -35,11 +36,9 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate loading for better UX
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
     if (isLogin) {
-      const success = login(formData.email, formData.password);
+      // Gửi password dạng plain text lên BE
+      const success = await login(formData.email, formData.password);
       if (success) {
         navigate(from, { replace: true });
       } else {
@@ -52,15 +51,16 @@ const LoginPage: React.FC = () => {
         return;
       }
 
-      const success = register(
+      // Gửi password dạng plain text lên BE
+      const success = await register(
+        formData.name,
         formData.email,
-        formData.password,
-        formData.name
+        formData.password
       );
       if (success) {
         navigate(from, { replace: true });
       } else {
-        setError("Email đã tồn tại");
+        setError("Email đã tồn tại hoặc đăng ký thất bại");
       }
     }
     setIsLoading(false);

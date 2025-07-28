@@ -1,45 +1,25 @@
 import React from "react";
 import { ArrowLeft, Plus, Minus, Trash2, ShoppingBag } from "lucide-react";
-import { CartItem } from "../types";
+import { formatPrice } from "../utils/function";
+import { useCart } from "../contexts/CartContext";
+import { useNavigate } from "react-router-dom";
 
 interface CartPageProps {}
 
 export const CartPage: React.FC<CartPageProps> = ({}) => {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  };
-
-  const cartItems = [
-    {
-      quantity: 1,
-      product: {
-        id: 2,
-        name: "Cua Biển Tươi Sống",
-        price: 450000,
-        image:
-          "https://images.pexels.com/photos/1395319/pexels-photo-1395319.jpeg",
-        description:
-          "Cua biển tươi sống, thịt chắc ngọt, màu đỏ tự nhiên. Thích hợp để hấp, nướng hoặc nấu lẩu.",
-        unit: "kg",
-        category: "Cua",
-        inStock: true,
-      },
-    },
-  ];
-
-  const totalAmount = cartItems.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const navigate = useNavigate();
+  const {
+    items: cartItems,
+    updateQuantity,
+    removeFromCart,
+    totalPrice,
+  } = useCart();
 
   if (cartItems.length === 0) {
     return (
       <div className="container mx-auto px-4 py-6">
         <button
-          onClick={() => {}}
+          onClick={() => navigate("/")}
           className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-6 transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -55,7 +35,7 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
             Bạn chưa có sản phẩm nào trong giỏ hàng
           </p>
           <button
-            onClick={() => {}}
+            onClick={() => navigate("/")}
             className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
           >
             Khám phá sản phẩm
@@ -68,7 +48,7 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
   return (
     <div className="container mx-auto px-4 py-6">
       <button
-        onClick={() => {}}
+        onClick={() => navigate("/")}
         className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-6 transition-colors"
       >
         <ArrowLeft className="h-5 w-5" />
@@ -98,7 +78,7 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
                       {item.product.name}
                     </h3>
                     <p className="text-gray-600 text-sm">
-                      {item.product.category}
+                      {item.product.category.name}
                     </p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="font-bold text-orange-600">
@@ -106,8 +86,11 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
                       </span>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => {}}
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity - 1)
+                          }
                           className="p-1 hover:bg-gray-100 rounded"
+                          disabled={item.quantity <= 1}
                         >
                           <Minus className="h-4 w-4" />
                         </button>
@@ -115,13 +98,15 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => {}}
+                          onClick={() =>
+                            updateQuantity(item.product.id, item.quantity + 1)
+                          }
                           className="p-1 hover:bg-gray-100 rounded"
                         >
                           <Plus className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => {}}
+                          onClick={() => removeFromCart(item.product.id)}
                           className="p-1 text-red-500 hover:bg-red-50 rounded ml-2"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -159,14 +144,12 @@ export const CartPage: React.FC<CartPageProps> = ({}) => {
           <div className="border-t pt-4 mb-6">
             <div className="flex justify-between text-lg font-bold">
               <span>Tổng cộng:</span>
-              <span className="text-orange-600">
-                {formatPrice(totalAmount)}
-              </span>
+              <span className="text-orange-600">{formatPrice(totalPrice)}</span>
             </div>
           </div>
 
           <button
-            onClick={() => {}}
+            onClick={() => navigate("/checkout")}
             className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-semibold transition-colors"
           >
             Tiến hành mua hàng

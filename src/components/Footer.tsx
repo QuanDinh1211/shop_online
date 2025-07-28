@@ -9,11 +9,35 @@ import {
   Instagram,
   Youtube,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface FooterProps {}
 
 export const Footer: React.FC<FooterProps> = () => {
-  const onLinkClick = (page: string) => {};
+  const navigate = useNavigate();
+
+  const onLinkClick = (page: string) => {
+    switch (page) {
+      case "about":
+        navigate("/about");
+        break;
+      case "shipping":
+        navigate("/shipping");
+        break;
+      case "return":
+        navigate("/return");
+        break;
+      case "guide":
+        navigate("/guide");
+        break;
+      case "faq":
+        navigate("/faq");
+        break;
+      default:
+        navigate("/");
+    }
+  };
+
   return (
     <footer className="bg-gray-800 text-white">
       <div className="container mx-auto px-4 py-8">

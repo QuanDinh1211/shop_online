@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ArrowLeft, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface FAQPageProps {}
 
@@ -11,6 +12,8 @@ interface FAQItem {
 }
 
 export const FAQPage: React.FC<FAQPageProps> = () => {
+  const navigate = useNavigate();
+
   const [openItems, setOpenItems] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("Tất cả");
 
@@ -111,7 +114,7 @@ export const FAQPage: React.FC<FAQPageProps> = () => {
   return (
     <div className="container mx-auto px-4 py-6">
       <button
-        onClick={() => {}}
+        onClick={() => navigate("/")}
         className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-6 transition-colors"
       >
         <ArrowLeft className="h-5 w-5" />

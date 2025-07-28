@@ -1,13 +1,15 @@
 import React from "react";
 import { ArrowLeft, Truck, Clock, MapPin, Package, Phone } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface ShippingPolicyPageProps {}
 
 export const ShippingPolicyPage: React.FC<ShippingPolicyPageProps> = () => {
+  const navigate = useNavigate();
   return (
     <div className="container mx-auto px-4 py-6">
       <button
-        onClick={() => {}}
+        onClick={() => navigate("/")}
         className="flex items-center gap-2 text-cyan-600 hover:text-cyan-700 mb-6 transition-colors"
       >
         <ArrowLeft className="h-5 w-5" />

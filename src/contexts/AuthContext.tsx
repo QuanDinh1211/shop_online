@@ -1,10 +1,17 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '../types';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { User } from "../types";
+import { userService } from "../services/userService";
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
-  register: (email: string, password: string, name: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -14,7 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -25,79 +32,68 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthReady, setIsAuthReady] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('seafood_user');
+    const storedUser = localStorage.getItem("seafood_user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setIsAuthReady(true);
   }, []);
 
-  const login = (email: string, password: string): boolean => {
-    // Simple mock authentication
-    const users = JSON.parse(localStorage.getItem('seafood_users') || '[]');
-    const foundUser = users.find((u: any) => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      const userInfo: User = {
-        id: foundUser.id,
-        email: foundUser.email,
-        name: foundUser.name,
-        phone: foundUser.phone,
-        address: foundUser.address
-      };
-      setUser(userInfo);
-      localStorage.setItem('seafood_user', JSON.stringify(userInfo));
-      return true;
-    }
-    return false;
-  };
-
-  const register = (email: string, password: string, name: string): boolean => {
-    const users = JSON.parse(localStorage.getItem('seafood_users') || '[]');
-    
-    // Check if user already exists
-    if (users.find((u: any) => u.email === email)) {
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const result = await userService.login(email, password);
+      if (result.success && result.data) {
+        setUser(result.data.user);
+        localStorage.setItem("seafood_user", JSON.stringify(result.data.user));
+        localStorage.setItem("seafood_token", result.data.token);
+        return true;
+      }
+      return false;
+    } catch {
       return false;
     }
+  };
 
-    const newUser = {
-      id: Date.now().toString(),
-      email,
-      password,
-      name,
-      phone: '',
-      address: ''
-    };
-
-    users.push(newUser);
-    localStorage.setItem('seafood_users', JSON.stringify(users));
-
-    const userInfo: User = {
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.name,
-      phone: newUser.phone,
-      address: newUser.address
-    };
-
-    setUser(userInfo);
-    localStorage.setItem('seafood_user', JSON.stringify(userInfo));
-    return true;
+  const register = async (
+    name: string,
+    email: string,
+    password: string
+  ): Promise<boolean> => {
+    try {
+      const result = await userService.register(name, email, password);
+      if (result.success && result.data) {
+        setUser(result.data.user);
+        localStorage.setItem("seafood_user", JSON.stringify(result.data.user));
+        localStorage.setItem("seafood_token", result.data.token);
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('seafood_user');
+    localStorage.removeItem("seafood_user");
+    localStorage.removeItem("seafood_token");
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     login,
     register,
     logout,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
   };
+
+  if (!isAuthReady) {
+    // Có thể trả về spinner hoặc null
+    return null;
+  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

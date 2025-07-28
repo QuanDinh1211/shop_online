@@ -40,3 +40,16 @@ export interface CustomerInfo {
   notes?: string;
 }
 
+export interface OrderItem {
+  productId: number;
+  quantity: number;
+}
+
+export interface CreateOrderPayload {
+  name: string;
+  phone: string;
+  address: string;
+  items: OrderItem[];
+  notes?: string;
+  paymentMethod?: string;
+}
