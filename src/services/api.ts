@@ -43,7 +43,9 @@ api.interceptors.response.use(
       localStorage.removeItem('seafood_token');
       localStorage.removeItem('seafood_user');
       // Chuyển hướng về trang đăng nhập hoặc reload
-      window.location.href = "/login";
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }
