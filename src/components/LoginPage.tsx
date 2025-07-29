@@ -1,28 +1,28 @@
-import React, { useState } from 'react';
-import { Fish, Lock, User, Eye, EyeOff } from 'lucide-react';
+import React, { useState } from "react";
+import { Fish, Lock, User, Eye, EyeOff } from "lucide-react";
 
 interface LoginPageProps {
-  onLogin: (username: string, password: string) => boolean;
+  onLogin: (username: string, password: string) => Promise<boolean>;
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     // Simulate loading
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const success = onLogin(username, password);
+    const success = await onLogin(username, password);
     if (!success) {
-      setError('Tên đăng nhập hoặc mật khẩu không đúng');
+      setError("Tên đăng nhập hoặc mật khẩu không đúng");
     }
     setIsLoading(false);
   };
@@ -70,7 +70,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
@@ -82,7 +82,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -92,8 +96,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               disabled={isLoading}
               className={`w-full py-3 px-4 rounded-lg font-semibold text-white transition-colors ${
                 isLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700'
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700"
               }`}
             >
               {isLoading ? (
@@ -102,19 +106,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                   Đang đăng nhập...
                 </div>
               ) : (
-                'Đăng nhập'
+                "Đăng nhập"
               )}
             </button>
           </form>
-
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Thông tin demo:</h3>
-            <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Tên đăng nhập:</strong> admin</p>
-              <p><strong>Mật khẩu:</strong> admin123</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>

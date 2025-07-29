@@ -1,48 +1,78 @@
-import React, { useState } from 'react';
-import { X, Upload } from 'lucide-react';
-import { Product } from '../../types';
+import React, { useEffect, useState } from "react";
+import { X, Upload } from "lucide-react";
+import { Category, Product, Unit } from "../types";
+import { getAllCategories, getAllUnits } from "../services/productService";
 
 interface ProductFormProps {
   product: Product | null;
-  onSubmit: (product: Omit<Product, 'id'>) => void;
+  onSubmit: (product: Product) => void;
   onCancel: () => void;
 }
 
-export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }) => {
+export const ProductForm: React.FC<ProductFormProps> = ({
+  product,
+  onSubmit,
+  onCancel,
+}) => {
   const [formData, setFormData] = useState({
-    name: product?.name || '',
+    name: product?.name || "",
     price: product?.price || 0,
-    image: product?.image || '',
-    description: product?.description || '',
-    unit: product?.unit || 'kg',
-    category: product?.category || 'Tôm',
-    inStock: product?.inStock ?? true
+    image: product?.image || "",
+    description: product?.description || "",
+    unit: product?.unitId || undefined,
+    category: product?.category_id || undefined,
+    inStock: product?.inStock ?? true,
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [dataCategories, setDataCategories] = useState<Category[]>([]);
+  const [dataUnits, setDataUnits] = useState<Unit[]>([]);
 
-  const categories = ['Tôm', 'Cua', 'Cá', 'Mực', 'Tôm hùm', 'Sò'];
-  const units = ['kg', 'con', 'lạng', 'gram'];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesData, unitsData] = await Promise.all([
+          getAllCategories(),
+          getAllUnits(),
+        ]);
+        setDataCategories(categoriesData.data);
+        setDataUnits(unitsData.data);
+      } catch (err: any) {
+        console.error("Fetch Error:", err);
+      } finally {
+      }
+    };
+    fetchData();
+  }, []);
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Tên sản phẩm không được để trống';
+      newErrors.name = "Tên sản phẩm không được để trống";
+    }
+
+    if (!formData.unit) {
+      newErrors.unit = "Đơn vị không được để trống";
+    }
+
+    if (!formData.category) {
+      newErrors.category = "Danh mục không được để trống";
     }
 
     if (formData.price <= 0) {
-      newErrors.price = 'Giá phải lớn hơn 0';
+      newErrors.price = "Giá phải lớn hơn 0";
     }
 
     if (!formData.image.trim()) {
-      newErrors.image = 'URL hình ảnh không được để trống';
+      newErrors.image = "URL hình ảnh không được để trống";
     } else if (!isValidUrl(formData.image)) {
-      newErrors.image = 'URL hình ảnh không hợp lệ';
+      newErrors.image = "URL hình ảnh không hợp lệ";
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Mô tả không được để trống';
+      newErrors.description = "Mô tả không được để trống";
     }
 
     setErrors(newErrors);
@@ -61,25 +91,28 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(formData);
+      onSubmit({ ...formData, id: product?.id || null });
     }
   };
 
   const handleChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 mt-0"
+      style={{ marginTop: "0" }}
+    >
       <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900">
-            {product ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}
+            {product ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm mới"}
           </h2>
           <button
             onClick={onCancel}
@@ -100,13 +133,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
+                onChange={(e) => handleChange("name", e.target.value)}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent ${
-                  errors.name ? 'border-red-500' : 'border-gray-300'
+                  errors.name ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Nhập tên sản phẩm"
               />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
             </div>
 
             {/* Price */}
@@ -117,14 +152,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
               <input
                 type="number"
                 value={formData.price}
-                onChange={(e) => handleChange('price', Number(e.target.value))}
+                onChange={(e) => handleChange("price", Number(e.target.value))}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent ${
-                  errors.price ? 'border-red-500' : 'border-gray-300'
+                  errors.price ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="0"
                 min="0"
               />
-              {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+              {errors.price && (
+                <p className="text-red-500 text-sm mt-1">{errors.price}</p>
+              )}
             </div>
 
             {/* Unit */}
@@ -133,14 +170,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
                 Đơn vị *
               </label>
               <select
-                value={formData.unit}
-                onChange={(e) => handleChange('unit', e.target.value)}
+                value={formData?.unit}
+                onChange={(e) => handleChange("unit", Number(e.target.value))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
               >
-                {units.map(unit => (
-                  <option key={unit} value={unit}>{unit}</option>
+                <option value="">Chọn đơn vị</option>
+                {dataUnits.map((unit) => (
+                  <option key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </option>
                 ))}
               </select>
+              {errors.unit && (
+                <p className="text-red-500 text-sm mt-1">{errors.unit}</p>
+              )}
             </div>
 
             {/* Category */}
@@ -150,13 +193,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
               </label>
               <select
                 value={formData.category}
-                onChange={(e) => handleChange('category', e.target.value)}
+                onChange={(e) =>
+                  handleChange("category", Number(e.target.value))
+                }
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
               >
-                {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                <option value="">Chọn danh mục</option>
+                {dataCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
                 ))}
               </select>
+              {errors.category && (
+                <p className="text-red-500 text-sm mt-1">{errors.category}</p>
+              )}
             </div>
 
             {/* In Stock */}
@@ -170,7 +221,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
                     type="radio"
                     name="inStock"
                     checked={formData.inStock}
-                    onChange={() => handleChange('inStock', true)}
+                    onChange={() => handleChange("inStock", true)}
                     className="mr-2 text-cyan-600"
                   />
                   Còn hàng
@@ -180,7 +231,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
                     type="radio"
                     name="inStock"
                     checked={!formData.inStock}
-                    onChange={() => handleChange('inStock', false)}
+                    onChange={() => handleChange("inStock", false)}
                     className="mr-2 text-cyan-600"
                   />
                   Hết hàng
@@ -197,9 +248,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
                 <input
                   type="url"
                   value={formData.image}
-                  onChange={(e) => handleChange('image', e.target.value)}
+                  onChange={(e) => handleChange("image", e.target.value)}
                   className={`flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent ${
-                    errors.image ? 'border-red-500' : 'border-gray-300'
+                    errors.image ? "border-red-500" : "border-gray-300"
                   }`}
                   placeholder="https://example.com/image.jpg"
                 />
@@ -211,8 +262,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
                   <Upload className="h-5 w-5" />
                 </button>
               </div>
-              {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
-              
+              {errors.image && (
+                <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+              )}
+
               {/* Image Preview */}
               {formData.image && isValidUrl(formData.image) && (
                 <div className="mt-3">
@@ -222,7 +275,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
                     alt="Preview"
                     className="w-32 h-32 object-cover rounded-lg border border-gray-200"
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.style.display = "none";
                     }}
                   />
                 </div>
@@ -236,14 +289,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => handleChange('description', e.target.value)}
+                onChange={(e) => handleChange("description", e.target.value)}
                 rows={4}
                 className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent ${
-                  errors.description ? 'border-red-500' : 'border-gray-300'
+                  errors.description ? "border-red-500" : "border-gray-300"
                 }`}
                 placeholder="Nhập mô tả chi tiết về sản phẩm..."
               />
-              {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+              {errors.description && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.description}
+                </p>
+              )}
             </div>
           </div>
 
@@ -260,7 +317,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onC
               type="submit"
               className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
             >
-              {product ? 'Cập nhật' : 'Thêm mới'}
+              {product ? "Cập nhật" : "Thêm mới"}
             </button>
           </div>
         </form>
