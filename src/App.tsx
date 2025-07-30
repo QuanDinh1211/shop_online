@@ -16,6 +16,10 @@ function AdminApp() {
   const [currentPage, setCurrentPage] = useState<AdminPage>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" }); // hoặc behavior: "auto"
+  }, [currentPage]);
+
   const handleLogin = async (
     username: string,
     password: string

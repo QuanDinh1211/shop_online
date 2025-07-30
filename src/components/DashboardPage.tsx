@@ -198,7 +198,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               Đơn hàng gần đây
             </h2>
             <a
-              href="/orders"
+              style={{ cursor: "pointer" }}
+              onClick={() => onPageChange("orders")}
               className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
             >
               Xem tất cả
@@ -224,9 +225,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ngày đặt
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Thao tác
                 </th>
               </tr>
             </thead>
@@ -284,11 +282,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(order.createdAt.toString())}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button className="text-cyan-600 hover:text-cyan-900">
-                        <Eye className="h-4 w-4" />
-                      </button>
-                    </td>
                   </tr>
                 ))
               )}
@@ -305,7 +298,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
               Khách hàng gần đây
             </h2>
             <a
-              href="/customers"
+              style={{ cursor: "pointer" }}
+              onClick={() => onPageChange("customers")}
               className="text-cyan-600 hover:text-cyan-700 text-sm font-medium"
             >
               Xem tất cả
@@ -334,9 +328,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ngày tạo
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Thao tác
                 </th>
               </tr>
             </thead>
@@ -381,11 +372,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(customer.createdAt.toString())}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button className="text-cyan-600 hover:text-cyan-900">
-                        <Eye className="h-4 w-4" />
-                      </button>
                     </td>
                   </tr>
                 ))
