@@ -6,15 +6,17 @@ export interface CartItem {
 }
 
 export interface CustomerInfo {
-  fullName: string;
+  name: string;
   phone: string;
   address: string;
+  email?: string;
   paymentMethod: 'cash' | 'card' | 'bank';
   notes?: string;
 }
 
 export interface Order {
-  id: string;
+  id: number;
+  order_code: string;
   items: CartItem[];
   customer: CustomerInfo;
   total: number;
@@ -28,6 +30,7 @@ export interface AdminStats {
   totalRevenue: number;
   pendingOrders: number;
   totalProducts: number;
+  totalCustomers: number;
 }
 
 export interface User {
@@ -65,4 +68,32 @@ export interface Unit {
   name: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T | null;
+}
+
+export interface Customer {
+  id: number;
+  name: string;
+  phone: string;
+  email?: string;
+  address?: string;
+  status: 'active' | 'inactive';
+  totalOrders: number;
+  totalSpent: number;
+  orders?: Order[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TodayStats {
+  todayOrders?: number;
+  todayRevenue?: number;
+  todayCustomers?: number;
+  lowStockProducts?: number;
+  overdueOrders?: number;
 }
